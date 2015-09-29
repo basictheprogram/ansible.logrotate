@@ -24,3 +24,9 @@
       line="rotate 32"
       backrefs=yes
   tags: logrotate
+  
+- name: Rotate log as this user and group
+  lineinfile: >
+      dest=/etc/logrotate.conf
+      line="su root syslog"
+  tags: logrotate
