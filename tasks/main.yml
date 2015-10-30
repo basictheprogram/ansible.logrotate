@@ -1,22 +1,22 @@
 ---
 # tasks file for logrotate
 
-- name: Rotate log as this user and group
+- name: Rotate log as this user and group (this release {{ ansible_lsb.release }} >= 14.04)
   lineinfile: >
       dest="/etc/logrotate.conf"
       regexp="^su root syslog"
       insertbefore="BOF"
       line="su root syslog\n"
       state="present"
-  when: "{{ ansible_lsb.release }} >= 14.04"
+  when: "{{ ansible_lsb.release }}|float >= 14.04"
   tags: logrotate
 
-- name: Remove "su root syslog" if {{ ansible_lsb.release }} < 14.04
+- name: Remove "su root syslog" (this release {{ ansible_lsb.release }} < 14.04)
   lineinfile: >
       dest="/etc/logrotate.conf"
       regexp="^su root syslog"
       state="absent"
-  when: "{{ ansible_lsb.release }} < 14.04"  
+  when: "{{ ansible_lsb.release }}|float < 14.04"  
   tags: logrotate
   
 - name: logrotate compress on
