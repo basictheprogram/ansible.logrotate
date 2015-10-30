@@ -1,7 +1,7 @@
 ---
 # tasks file for logrotate
 
-- name: Rotate log as this user and group (this release {{ ansible_lsb.release }} >= 14.04)
+- name: Rotate log as this user and group (14.04 or newer)
   lineinfile: >
       dest="/etc/logrotate.conf"
       regexp="^su root syslog"
@@ -11,7 +11,7 @@
   when: "{{ ansible_lsb.release }}|float >= 14.04"
   tags: logrotate
 
-- name: Remove "su root syslog" (this release {{ ansible_lsb.release }} < 14.04)
+- name: Remove "su root syslog" (older then 14.04)
   lineinfile: >
       dest="/etc/logrotate.conf"
       regexp="^su root syslog"
