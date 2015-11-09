@@ -8,7 +8,7 @@
       insertbefore="BOF"
       line="su root syslog\n"
       state="present"
-  when: "{{ ansible_lsb.release }}|float >= 14.04"
+  when: "'{{ ansible_lsb.id }}' == 'Ubuntu' and '{{ ansible_lsb.release }}'|float >= 14.04"
   tags: logrotate
 
 - name: Remove "su root syslog" (older then 14.04)
@@ -16,7 +16,7 @@
       dest="/etc/logrotate.conf"
       regexp="^su root syslog"
       state="absent"
-  when: "{{ ansible_lsb.release }}|float < 14.04"  
+  when: "'{{ ansible_lsb.id }}' == 'Ubuntu' and '{{ ansible_lsb.release }}'|float < 14.04" 
   tags: logrotate
   
 - name: logrotate compress on
