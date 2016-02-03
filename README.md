@@ -16,7 +16,7 @@ A list of other roles hosted on Galaxy should go here, plus any details in regar
 ````
 - hosts: servers
   roles:
-     - { role: logrotate, sudo: yes }
+     - { role: logrotate, become: yes }
 ```
 
 # License #
