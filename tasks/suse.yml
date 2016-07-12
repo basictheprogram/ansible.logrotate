@@ -2,49 +2,49 @@
 # tasks file for logrotate
 
 - name: logrotate packages (zypper)
-  zypper: >
-      name="{{ item }}"
-      state="latest"
+  zypper:
+      name: "{{ item }}"
+      state: "latest"
   with_items:
       - logrotate
   tags: logrotate
   
 - name: logrotate compression on
-  lineinfile: >
-      dest="/etc/logrotate.conf"
-      regexp="^#compress"
-      line="compress"
-      backrefs="yes"
+  lineinfile:
+      dest: "/etc/logrotate.conf"
+      regexp: "^#compress"
+      line: "compress"
+      backrefs: "yes"
   tags: logrotate
   
 - name: logrotate 32 weeks of backlogs (comment)
-  lineinfile: >
-      dest="/etc/logrotate.conf"
-      regexp="^# keep [0-9]* weeks worth of backlogs"
-      line="# keep 32 weeks of backlogs"
-      backrefs="yes"
+  lineinfile:
+      dest: "/etc/logrotate.conf"
+      regexp: "^# keep [0-9]* weeks worth of backlogs"
+      line: "# keep 32 weeks of backlogs"
+      backrefs: "yes"
   tags: logrotate
     
 - name: logrotate 32 weeks of backlogs
-  lineinfile: >
-      dest="/etc/logrotate.conf"
-      regexp="^rotate [^32]"
-      line="rotate 32"
-      backrefs="yes"
+  lineinfile:
+      dest: "/etc/logrotate.conf"
+      regexp: "^rotate [^32]"
+      line: "rotate 32"
+      backrefs: "yes"
   tags: logrotate
 
 - name: use gzip (default) for compression scheme
-  lineinfile: >
-      dest="/etc/logrotate.conf"
-      regexp="^compresscmd"
-      line="# compresscmd"
-      backrefs="yes"
+  lineinfile:
+      dest: "/etc/logrotate.conf"
+      regexp: "^compresscmd"
+      line: "# compresscmd"
+      backrefs: "yes"
   tags: logrotate
 
 - name: use gunzip (default) for compression scheme
-  lineinfile: >
-      dest="/etc/logrotate.conf"
-      regexp="^uncompresscmd"
-      line="# uncompresscmd"
-      backrefs="yes"
+  lineinfile:
+      dest: "/etc/logrotate.conf"
+      regexp: "^uncompresscmd"
+      line: "# uncompresscmd"
+      backrefs: "yes"
   tags: logrotate
