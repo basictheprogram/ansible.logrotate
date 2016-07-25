@@ -3,43 +3,43 @@
 
 - name: Rotate log as this user and group (14.04 or newer)
   lineinfile:
-      dest: "/etc/logrotate.conf"
-      regexp: "^su root syslog"
-      insertbefore: "BOF"
-      line: "su root syslog\n"
-      state: "present"
+	  dest: "/etc/logrotate.conf"
+	  regexp: "^su root syslog"
+	  insertbefore: "BOF"
+	  line: "su root syslog\n"
+	  state: "present"
   when: ansible_distribution == 'Ubuntu' and ansible_lsb.release|version_compare('14.04', '>=')
   tags: logrotate
 
 - name: Remove "su root syslog" (older then 14.04)
   lineinfile:
-      dest: "/etc/logrotate.conf"
-      regexp: "^su root syslog"
-      state: "absent"
+	  dest: "/etc/logrotate.conf"
+	  regexp: "^su root syslog"
+	  state: "absent"
   when: ansible_distribution == 'Ubuntu' and ansible_lsb.release|version_compare('14.04', '<')
   tags: logrotate
   
 - name: logrotate compress on
   lineinfile:
-      dest: "/etc/logrotate.conf"
-      regexp: "^#compress"
-      line: "compress"
-      backrefs: "yes"
+	  dest: "/etc/logrotate.conf"
+	  regexp: "^#compress"
+	  line: "compress"
+	  backrefs: "yes"
   tags: logrotate
   
 - name: logrotate 32 weeks of backlogs (comment)
   lineinfile:
-      dest: "/etc/logrotate.conf"
-      regexp: "^# keep [0-9]* weeks worth of backlogs"
-      line: "# keep 32 weeks of backlogs"
-      backrefs: "yes"
+	  dest: "/etc/logrotate.conf"
+	  regexp: "^# keep [0-9]* weeks worth of backlogs"
+	  line: "# keep 32 weeks of backlogs"
+	  backrefs: "yes"
   tags: logrotate
     
 - name: logrotate 32 weeks of backlogs
   lineinfile:
-      dest: "/etc/logrotate.conf"
-      regexp: "^rotate [^32]"
-      line: "rotate 32"
-      backrefs: "yes"
+	  dest: "/etc/logrotate.conf"
+	  regexp: "^rotate [^32]"
+	  line: "rotate 32"
+	  backrefs: "yes"
   tags: logrotate
   
