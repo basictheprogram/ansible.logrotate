@@ -1,7 +1,8 @@
 ---
 # tasks file for logrotate
 
-- include: debian.yml
+- import_tasks: debian.yml
   when: ansible_os_family == 'Debian'
-- include: suse.yml
+  
+- import_tasks: suse.yml
   when: ansible_os_family == 'Suse' or ansible_os_family == 'openSUSE'
