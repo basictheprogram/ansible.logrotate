@@ -4,7 +4,8 @@
 - name: install packages (apt)
   apt:
     name: "{{ item }}"
-    state: present
+    state: "present"
+    install_recommends: no
   with_items:
     - "logrotate"
   tags: logrotate
