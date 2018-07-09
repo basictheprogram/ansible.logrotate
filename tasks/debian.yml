@@ -3,11 +3,9 @@
 
 - name: install packages (apt)
   apt:
-    name: "{{ item }}"
+    name: "{{ logrotate_packages }}"
     state: "present"
     install_recommends: no
-  with_items:
-    - "logrotate"
   tags: logrotate
 
 - name: Rotate log as this user and group (14.04 or newer)

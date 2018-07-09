@@ -3,10 +3,8 @@
 
 - name: logrotate packages (zypper)
   zypper:
-    name: "{{ item }}"
+    name: "{{ logrotate_packages }}"
     state: "latest"
-  with_items:
-      - "logrotate"
   tags: logrotate
   
 - name: logrotate compression on
