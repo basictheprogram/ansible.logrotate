@@ -21,4 +21,4 @@
       when: ansible_os_family == 'Debian'
 
   roles:
-    - role: real_time_come.logrotate
+    - role: real_time_com.logrotate
