@@ -1,14 +1,6 @@
 ---
 # tasks file for logrotate for Debian and Ubuntu
 
-- name: gather os specific variables
-  include_vars: "{{ item }}"
-  with_first_found:
-    - "{{ ansible_distribution_release }}.yml"
-    - "{{ ansible_distribution }}.yml"
-    - "{{ ansible_os_family }}.yml"
-  tags: bootstrap
-
 - name: install packages (apt)
   apt:
     name: "{{ logrotate_packages }}"
