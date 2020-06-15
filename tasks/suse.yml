@@ -4,9 +4,9 @@
 - name: logrotate packages (zypper)
   zypper:
     name: "{{ logrotate_packages }}"
-    state: "latest"
+    state: "present"
   tags: logrotate
-  
+
 - name: logrotate compression on
   lineinfile:
     dest: "/etc/logrotate.conf"
@@ -14,7 +14,7 @@
     line: "compress"
     backrefs: "yes"
   tags: logrotate
-  
+
 - name: logrotate 32 weeks of backlogs (comment)
   lineinfile:
     dest: "/etc/logrotate.conf"
@@ -22,7 +22,7 @@
     line: "# keep 32 weeks of backlogs"
     backrefs: "yes"
   tags: logrotate
-    
+
 - name: logrotate 32 weeks of backlogs
   lineinfile:
     dest: "/etc/logrotate.conf"

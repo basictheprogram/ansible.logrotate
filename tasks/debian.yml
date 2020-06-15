@@ -16,8 +16,8 @@
     insertbefore: "BOF"
     line: "su root syslog\n"
     state: "present"
-  when: 
-    - ansible_distribution == 'Ubuntu' 
+  when:
+    - ansible_distribution == 'Ubuntu'
     - ansible_lsb.release is version_compare('14.04', '>=')
   tags: logrotate
 
@@ -26,11 +26,11 @@
     dest: "/etc/logrotate.conf"
     regexp: "^su root syslog"
     state: "absent"
-  when: 
+  when:
     - ansible_distribution == 'Ubuntu'
     - ansible_lsb.release is version_compare('14.04', '<')
   tags: logrotate
-  
+
 - name: logrotate compress on
   lineinfile:
     dest: "/etc/logrotate.conf"
@@ -38,7 +38,7 @@
     line: "compress"
     backrefs: "yes"
   tags: logrotate
-  
+
 - name: logrotate 32 weeks of backlogs (comment)
   lineinfile:
     dest: "/etc/logrotate.conf"
@@ -46,7 +46,7 @@
     line: "# keep 32 weeks of backlogs"
     backrefs: "yes"
   tags: logrotate
-    
+
 - name: logrotate 32 weeks of backlogs
   lineinfile:
     dest: "/etc/logrotate.conf"
@@ -54,4 +54,3 @@
     line: "rotate 32"
     backrefs: "yes"
   tags: logrotate
-  
