@@ -1,0 +1,27 @@
+# Ansible
+# Editor
+# Molecule
+# OS
+# Python
+*.egg-info/
+*.pyc
+*.pyo
+*.retry
+*.swo
+*.swp
+*~
+.DS_Store
+.ansible/
+.cache/
+.idea/
+.molecule/
+.pytest_cache/
+.tox/
+.venv/
+.vscode/
+Thumbs.db
+__pycache__/
+build/
+dist/
+env/
+venv/

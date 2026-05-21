@@ -1,0 +1,33 @@
+---
+- name: Prepare molecule test host
+  hosts: all
+  become: true
+
+  vars:
+    prepare_packages:
+      - dialog
+      - less
+      - vim-tiny
+
+  environment:
+    TZ: "America/Chicago"
+    DEBIAN_FRONTEND: "noninteractive"
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        force_apt_get: true
+        autoremove: true
+        autoclean: true
+      changed_when: false
+      when: ansible_facts['os_family'] == 'Debian'
+
+    - name: Install prepare packages
+      ansible.builtin.apt:
+        name: "{{ prepare_packages }}"
+        state: present
+        install_recommends: false
+        force_apt_get: true
+      when: ansible_facts['os_family'] == 'Debian'

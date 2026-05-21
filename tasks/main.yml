@@ -1,21 +1,66 @@
 ---
-# tasks file for logrotate
+# tasks file for realtime.logrotate
+#
+# Fork of arillso/ansible.logrotate (https://github.com/arillso/ansible.logrotate)
+# Maintained by Bob Tanner, Real Time Enterprises, Inc. (fork taken over 2026-05-21)
 
-- name: logrotate gathering OS specific variables
-  include_vars: "{{ lookup('first_found', params) }}"
+- name: Gather OS specific variables
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       files:
-        - "{{ ansible_distribution_release }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - "main.yml"
+        - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_version'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
+        - "{{ ansible_facts['distribution'] }}.yml"
+        - "{{ ansible_facts['os_family'] }}.yml"
+        - "{{ ansible_facts['system'] }}.yml"
       paths:
-        - "defaults"
+        - "vars"
+      errors: ignore
   tags: logrotate
 
-- import_tasks: debian.yml
-  when: ansible_os_family == 'Debian'
+- name: Include tasks for Debian/Ubuntu
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_facts['os_family'] == 'Debian'
+  tags: logrotate
 
-- import_tasks: suse.yml
-  when: ansible_os_family == 'Suse' or ansible_os_family == 'openSUSE'
+- name: Include tasks for SUSE/openSUSE
+  ansible.builtin.include_tasks: suse.yml
+  when: ansible_facts['os_family'] in ['Suse', 'openSUSE Leap', 'openSUSE Tumbleweed']
+  tags: logrotate
+
+- name: Include tasks for Red Hat / Rocky / Alma
+  ansible.builtin.include_tasks: redhat.yml
+  when: ansible_facts['os_family'] == 'RedHat'
+  tags: logrotate
+
+- name: Create logrotate global configuration
+  become: true
+  ansible.builtin.template:
+    src: "etc/logrotate.conf.j2"
+    dest: "/etc/logrotate.conf"
+    owner: root
+    group: root
+    mode: "0644"
+  when: logrotate_global_config | bool
+  tags: logrotate
+
+- name: Create per-application logrotate configs
+  become: true
+  ansible.builtin.template:
+    src: "etc/logrotate.d/application.j2"
+    dest: "{{ logrotate_include_dir }}/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop: "{{ logrotate_applications }}"
+  tags: logrotate
+
+- name: Create hourly cron symlink for logrotate
+  become: true
+  ansible.builtin.file:
+    path: "/etc/cron.hourly/logrotate"
+    src: "/etc/cron.daily/logrotate"
+    state: link
+  when: logrotate_use_hourly_rotation | bool
+  tags: logrotate

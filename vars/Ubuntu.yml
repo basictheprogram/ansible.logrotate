@@ -1,0 +1,10 @@
+---
+# Distribution-default global options for /etc/logrotate.conf on Ubuntu.
+# Used when logrotate_options is empty.
+# Note: 'su root syslog' is the Ubuntu-specific default group for log ownership.
+logrotate_distribution_options:
+  - weekly
+  - rotate 4
+  - create
+  - dateext
+  - su root syslog

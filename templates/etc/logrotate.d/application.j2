@@ -1,0 +1,45 @@
+{{ ansible_managed | comment }}
+{#
+  logrotate.d/application.j2 — per-application logrotate drop-in template
+  Fork of arillso/ansible.logrotate (https://github.com/arillso/ansible.logrotate)
+  Maintained by Bob Tanner, Real Time Enterprises, Inc. (fork taken over 2026-05-21)
+
+  Rendered once per entry in logrotate_applications.
+  Supports: options, postrotate, preremove, lastaction, firstaction script blocks.
+#}
+
+{% for definition in item.definitions %}
+{{ definition.logs | join(" ") }} {
+{% for option in definition.options %}
+    {{ option }}
+{% endfor %}
+{% if definition.postrotate | default([]) %}
+    postrotate
+{% for line in definition.postrotate %}
+        {{ line }}
+{% endfor %}
+    endscript
+{% endif %}
+{% if definition.preremove | default([]) %}
+    preremove
+{% for line in definition.preremove %}
+        {{ line }}
+{% endfor %}
+    endscript
+{% endif %}
+{% if definition.lastaction | default([]) %}
+    lastaction
+{% for line in definition.lastaction %}
+        {{ line }}
+{% endfor %}
+    endscript
+{% endif %}
+{% if definition.firstaction | default([]) %}
+    firstaction
+{% for line in definition.firstaction %}
+        {{ line }}
+{% endfor %}
+    endscript
+{% endif %}
+}
+{% endfor %}

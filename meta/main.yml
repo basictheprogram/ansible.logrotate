@@ -1,19 +1,44 @@
 ---
+# No role dependencies — this role is self-contained.
+# Previously depended on realtime.logrotate_core, which has been consolidated
+# into this role as of 2026-05-21.
 dependencies: []
 
 galaxy_info:
-  author: basictheprogram
+  namespace: realtime
+  author: "Bob Tanner"
   role_name: logrotate
-  description: logrotate
-  company: Real Time Enterprises, Inc.
-  license: license (BSD, MIT)
-  min_ansible_version: 2.9
+  description: >
+    Ansible role to install and configure logrotate on Debian/Ubuntu,
+    Red Hat/Rocky/Alma, and SUSE/openSUSE. Fork of arillso/ansible.logrotate
+    (https://github.com/arillso/ansible.logrotate), taken over 2026-05-21
+    following upstream archival.
+  company: "Real Time Enterprises, Inc."
+  license: "MIT"
+  min_ansible_version: "2.20"
   platforms:
     - name: Ubuntu
       versions:
-        - bionic
-        - focal
-        - xenial
+        - jammy
+        - noble
+        - resolute
+    - name: Debian
+      versions:
+        - bookworm
+        - trixie
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+    - name: opensuse
+      versions:
+        - all
   galaxy_tags:
     - linux
+    - logrotate
+    - log
+    - rotate
     - ubuntu
+    - debian
+    - redhat
+    - suse

@@ -1,5 +1,72 @@
 ---
-# defaults file for logrotate
+# defaults file for realtime.logrotate
+#
+# Fork of arillso/ansible.logrotate (https://github.com/arillso/ansible.logrotate)
+# Maintained by Bob Tanner, Real Time Enterprises, Inc. (fork taken over 2026-05-21)
 
+# Package(s) to install. Override to add extras (e.g. cronie on EL).
 logrotate_packages:
   - logrotate
+
+# Global options written into /etc/logrotate.conf.
+# When this list is empty, distribution-appropriate defaults from
+# vars/{{ ansible_facts['distribution'] }}.yml are used instead.
+logrotate_options: []
+
+# Fallback distribution options — populated by vars/ per-distro files.
+# You should not normally override this directly; use logrotate_options instead.
+logrotate_distribution_options: []
+
+# Filesystem path for per-application drop-in config files.
+logrotate_include_dir: /etc/logrotate.d
+
+# Set to false to skip deploying /etc/logrotate.conf entirely.
+# Useful when another role or package already manages the global config.
+logrotate_global_config: true
+
+# Create a symlink /etc/cron.hourly/logrotate -> /etc/cron.daily/logrotate
+# to enable sub-daily (hourly) rotation.
+logrotate_use_hourly_rotation: false
+
+# wtmp rotation config
+logrotate_wtmp_enable: true
+logrotate_wtmp:
+  logs:
+    - /var/log/wtmp
+  options:
+    - missingok
+    - monthly
+    - create 0664 root utmp
+    - rotate 1
+
+# btmp rotation config
+logrotate_btmp_enable: true
+logrotate_btmp:
+  logs:
+    - /var/log/btmp
+  options:
+    - missingok
+    - monthly
+    - create 0660 root utmp
+    - rotate 1
+
+# List of per-application logrotate configs to deploy under /etc/logrotate.d/.
+# Each entry becomes a separate file named by the 'name' key.
+#
+# Example:
+# logrotate_applications:
+#   - name: myapp
+#     definitions:
+#       - logs:
+#           - /var/log/myapp/*.log
+#         options:
+#           - rotate 14
+#           - daily
+#           - missingok
+#           - notifempty
+#           - compress
+#           - delaycompress
+#           - sharedscripts
+#         postrotate:
+#           - systemctl reload myapp || true
+logrotate_applications: []

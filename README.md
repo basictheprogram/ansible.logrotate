@@ -1,27 +1,164 @@
-# Role Name #
-A brief description of the role goes here.
+# ansible-role-logrotate
 
-# Requirements #
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Ansible role to install and configure [logrotate](https://github.com/logrotate/logrotate)
+on Debian/Ubuntu, Red Hat/CentOS/Rocky/Alma, and SUSE/openSUSE systems.
 
-# Role Variables #
+## Fork notice
+
+This role is a fork of [arillso/ansible.logrotate](https://github.com/arillso/ansible.logrotate),
+originally authored by [arillso](https://github.com/arillso) and licensed under
+the MIT License. The upstream repository was archived read-only on 2025-11-19.
+
+Fork taken over on 2026-05-21 by Bob Tanner, Real Time Enterprises, Inc.
+Maintained at: https://github.com/real-time-com/ansible-role-logrotate
+
+Changes from upstream: see [CHANGELOG.md](CHANGELOG.md).
+
+## Requirements
+
+- ansible-core >= 2.20
+- `community.general` collection (for SUSE/openSUSE support — install via
+  `ansible-galaxy collection install -r requirements.yml`)
+
+## Supported platforms
+
+| Platform | Versions |
+|----------|----------|
+| Ubuntu   | jammy (22.04), noble (24.04), resolute (26.04) |
+| Debian   | bookworm (12), trixie (13) |
+| EL (Rocky/Alma/RHEL/CentOS) | 8, 9 |
+| SUSE / openSUSE Leap | current |
+
+## Role variables
+
+All variables have defaults and can be overridden in your inventory or playbook.
+
+### Package
+
+```yaml
+# Package(s) to install. Override to add extras (e.g. cronie on EL).
+logrotate_packages:
+  - logrotate
 ```
-No role variables (but there should be, fix that!)
+
+### Global logrotate.conf
+
+```yaml
+# Whether to deploy and manage /etc/logrotate.conf via template.
+logrotate_global_config: true
+
+# Global options written into /etc/logrotate.conf.
+# When empty, distribution-appropriate defaults are used (see vars/).
+logrotate_options: []
+
+# Directory where per-application drop-in configs are placed.
+logrotate_include_dir: /etc/logrotate.d
+
+# Create a symlink from cron.hourly to cron.daily for sub-daily rotation.
+logrotate_use_hourly_rotation: false
 ```
 
-# Dependencies #
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### wtmp / btmp
 
-# Example Playbook #
-````
-- hosts: servers
+```yaml
+logrotate_wtmp_enable: true
+logrotate_wtmp:
+  logs:
+    - /var/log/wtmp
+  options:
+    - missingok
+    - monthly
+    - create 0664 root utmp
+    - rotate 1
+
+logrotate_btmp_enable: true
+logrotate_btmp:
+  logs:
+    - /var/log/btmp
+  options:
+    - missingok
+    - monthly
+    - create 0660 root utmp
+    - rotate 1
+```
+
+### Per-application configs
+
+```yaml
+# List of application logrotate configs to deploy under /etc/logrotate.d/.
+logrotate_applications: []
+```
+
+Each entry supports the following keys:
+
+```yaml
+logrotate_applications:
+  - name: myapp                   # filename in /etc/logrotate.d/
+    definitions:
+      - logs:
+          - /var/log/myapp/*.log
+        options:
+          - rotate 14
+          - daily
+          - missingok
+          - notifempty
+          - compress
+          - delaycompress
+          - sharedscripts
+        postrotate:
+          - systemctl reload myapp || true
+        preremove: []
+        lastaction: []
+        firstaction: []
+```
+
+Multiple `definitions` blocks are supported per application entry, which allows
+a single drop-in file to cover several log path patterns with different options.
+
+## Example playbook
+
+```yaml
+- hosts: all
+  become: true
+
+  vars:
+    logrotate_options:
+      - weekly
+      - su root adm
+      - rotate 4
+      - create
+      - dateext
+      - compress
+
+    logrotate_applications:
+      - name: nginx
+        definitions:
+          - logs:
+              - /var/log/nginx/*.log
+            options:
+              - rotate 52
+              - weekly
+              - missingok
+              - notifempty
+              - compress
+              - delaycompress
+              - sharedscripts
+            postrotate:
+              - invoke-rc.d nginx rotate >/dev/null 2>&1 || true
+
   roles:
-     - { role: logrotate, become: yes }
+    - role: realtime.logrotate
 ```
 
-# License #
-BSD
+## License
 
-# Author Information #
-[Real Time Enterprises Inc.](http://www.real-time.com), 
-[Bob Tanner](https://github.com/basictheprogram)
+MIT — see [LICENSE](LICENSE).
+
+Original work by [arillso](https://github.com/arillso).
+Modifications and ongoing maintenance by Bob Tanner,
+[Real Time Enterprises, Inc.](https://www.real-time.com)
+
+## Author information
+
+- Bob Tanner — https://github.com/basictheprogram
+- Real Time Enterprises, Inc. — https://www.real-time.com

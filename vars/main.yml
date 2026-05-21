@@ -1,2 +1,7 @@
 ---
-# vars file for logrotate
+# vars file for realtime.logrotate
+#
+# Per-distro overrides live in vars/{{ ansible_facts['distribution'] }}.yml
+# and are loaded automatically by tasks/main.yml.
+#
+# Do not put user-facing variables here — use defaults/main.yml for those.
